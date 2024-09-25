@@ -7,17 +7,18 @@ import { UpdatePatientDto } from './dtos/update-patient.dto';
 export class PatientService {
   constructor(private prisma: PrismaService) {}
 
-
   async create(data: CreatePatientDto) {
     return this.prisma.patient.create({ data });
   }
 
-
   async findAll() {
-    return this.prisma.patient.findMany();
+    return this.prisma.patient.findMany({
+      orderBy: {
+        id_patient: 'asc',
+      },
+    });
   }
 
- 
   async findOne(id: number) {
     const patient = await this.prisma.patient.findUnique({
       where: { id_patient: id },
@@ -28,14 +29,12 @@ export class PatientService {
     return patient;
   }
 
-
   async update(id: number, data: UpdatePatientDto) {
     return this.prisma.patient.update({
       where: { id_patient: id },
       data,
     });
   }
-
 
   async remove(id: number) {
     return this.prisma.patient.delete({
