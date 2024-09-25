@@ -52,4 +52,11 @@ export class AppointmentController {
   remove(@Param('id') id: string) {
     return this.appointmentService.remove(Number(id));
   }
+
+  @Get('referred/:id_doctor')
+  findAppointmentsByReferredDoctor(@Param('id_doctor') id_doctor: string) {
+    return this.appointmentService.findAppointmentsByReferredDoctor(
+      Number(id_doctor),
+    );
+  }
 }

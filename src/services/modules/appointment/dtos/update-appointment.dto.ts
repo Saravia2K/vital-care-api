@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsObject, IsInt } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsObject,
+  IsInt,
+  IsBoolean,
+} from 'class-validator';
 
 class ReferenceDto {
   @IsInt()
@@ -25,4 +31,8 @@ export class UpdateAppointmentDto {
   @IsOptional()
   @IsObject()
   reference?: ReferenceDto;
+
+  @IsOptional()
+  @IsBoolean()
+  finished?: boolean;
 }

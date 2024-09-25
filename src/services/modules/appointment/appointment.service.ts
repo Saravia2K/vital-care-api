@@ -59,7 +59,15 @@ export class AppointmentService {
         id_appointment: true,
         date: true,
         patient: true,
-        doctor: true,
+        doctor: {
+          select: {
+            id_doctor: true,
+            names: true,
+            last_names: true,
+            email: true,
+            specialty: true,
+          },
+        },
         diagnosis: true,
         treatment: true,
         observations: true,
@@ -92,7 +100,7 @@ export class AppointmentService {
   }
 
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
-    const { diagnosis, treatment, observations, reference } =
+    const { diagnosis, treatment, observations, reference, finished } =
       updateAppointmentDto;
 
     // Actualizar la cita
@@ -102,6 +110,7 @@ export class AppointmentService {
         diagnosis,
         treatment,
         observations,
+        finished,
       },
     });
 
@@ -168,6 +177,22 @@ export class AppointmentService {
         observations: true,
         reference: true,
         finished: true,
+      },
+    });
+  }
+
+  async findAppointmentsByReferredDoctor(id_doctor: number) {
+    // Obtener todas las citas en las que el doctor fue referido
+    return this.prisma.appointment.findMany({
+      where: {
+        reference: {
+          id_doctor: id_doctor,
+        },
+      },
+      include: {
+        patient: true,
+        doctor: true,
+        reference: true,
       },
     });
   }
