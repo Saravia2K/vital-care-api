@@ -9,6 +9,8 @@ import { AppointmentController } from './services/modules/appointment/appointmen
 import { SpecialitiesController } from './controllers/specialities-controller/specialities-controller.controller';
 import { AuthController } from './controllers/auth-controller/auth-controller.controller';
 import { ConfigService } from '@nestjs/config';
+import { DoctorController } from './controllers/doctor/doctor.controller';
+import { DoctorService } from './services/doctor/doctor.service';
 
 @Module({
   imports: [],
@@ -18,6 +20,7 @@ import { ConfigService } from '@nestjs/config';
     AppointmentController,
     SpecialitiesController,
     AuthController,
+    DoctorController,
   ],
   providers: [
     AppService,
@@ -26,6 +29,7 @@ import { ConfigService } from '@nestjs/config';
     AppointmentService,
     ConfigService,
     Logger,
+    DoctorService,
   ],
 })
 export class AppModule {}

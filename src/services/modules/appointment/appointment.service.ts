@@ -8,16 +8,45 @@ export class AppointmentService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CreateAppointmentDto) {
-    return this.prisma.appointment.create({ data });
+    return this.prisma.appointment.create({
+      data: {
+        ...data,
+        finished: false,
+        date: new Date(data.date),
+      },
+    });
   }
 
   async findAll() {
-    return this.prisma.appointment.findMany();
+    return this.prisma.appointment.findMany({
+      select: {
+        id_appointment: true,
+        date: true,
+        patient: true,
+        doctor: true,
+        diagnosis: true,
+        treatment: true,
+        observations: true,
+        reference: true,
+        finished: true,
+      },
+    });
   }
 
   async findOne(id: number) {
     const appointment = await this.prisma.appointment.findUnique({
       where: { id_appointment: id },
+      select: {
+        id_appointment: true,
+        date: true,
+        patient: true,
+        doctor: true,
+        diagnosis: true,
+        treatment: true,
+        observations: true,
+        reference: true,
+        finished: true,
+      },
     });
     if (!appointment) {
       throw new NotFoundException(`Appointment with ID ${id} not found`);
@@ -57,8 +86,8 @@ export class AppointmentService {
         date: 'asc',
       },
       include: {
-        patient: true, 
-        doctor: true,  
+        patient: true,
+        doctor: true,
       },
     });
   }
