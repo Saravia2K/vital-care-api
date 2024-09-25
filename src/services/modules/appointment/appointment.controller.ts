@@ -25,6 +25,11 @@ export class AppointmentController {
     return this.appointmentService.findAll();
   }
 
+  @Get('general')
+  findAllForGeneral() {
+    return this.appointmentService.findAllForGeneral();
+  }
+
   @Get('today')
   findTodayAppointments() {
     return this.appointmentService.findTodayAppointments();
@@ -36,7 +41,7 @@ export class AppointmentController {
   }
 
   @Patch(':id')
-  update(
+  async updateAppointment(
     @Param('id') id: string,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
   ) {

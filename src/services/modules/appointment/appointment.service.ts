@@ -33,9 +33,11 @@ export class AppointmentService {
     });
   }
 
-  async findOne(id: number) {
-    const appointment = await this.prisma.appointment.findUnique({
-      where: { id_appointment: id },
+  async findAllForGeneral() {
+    return this.prisma.appointment.findMany({
+      where: {
+        reference: null,
+      },
       select: {
         id_appointment: true,
         date: true,
@@ -48,17 +50,88 @@ export class AppointmentService {
         finished: true,
       },
     });
+  }
+
+  async findOne(id: number) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id_appointment: id },
+      select: {
+        id_appointment: true,
+        date: true,
+        patient: true,
+        doctor: true,
+        diagnosis: true,
+        treatment: true,
+        observations: true,
+        reference: {
+          select: {
+            id_reference: true,
+            comments: true,
+            doctor: {
+              select: {
+                id_doctor: true,
+                names: true,
+                last_names: true,
+                specialty: {
+                  select: {
+                    id_speciality: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        finished: true,
+      },
+    });
     if (!appointment) {
       throw new NotFoundException(`Appointment with ID ${id} not found`);
     }
     return appointment;
   }
 
-  async update(id: number, data: UpdateAppointmentDto) {
-    return this.prisma.appointment.update({
+  async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
+    const { diagnosis, treatment, observations, reference } =
+      updateAppointmentDto;
+
+    // Actualizar la cita
+    const updatedAppointment = await this.prisma.appointment.update({
       where: { id_appointment: id },
-      data,
+      data: {
+        diagnosis,
+        treatment,
+        observations,
+      },
     });
+
+    // Si hay referencia, agregarla
+    if (reference) {
+      const { id_doctor, comments } = reference;
+
+      // Asegúrate de que id_doctor esté definido
+      if (!id_doctor) {
+        throw new Error('id_doctor es necesario para crear una referencia.');
+      }
+
+      // Crear la referencia
+      const createdReference = await this.prisma.reference.create({
+        data: {
+          id_doctor: id_doctor, // Usamos el campo id_doctor
+          comments: comments || null, // Comentario opcional
+        },
+      });
+
+      // Actualizar la cita con el id_reference de la referencia creada
+      await this.prisma.appointment.update({
+        where: { id_appointment: id },
+        data: {
+          id_reference: createdReference.id_reference,
+        },
+      });
+    }
+
+    return updatedAppointment;
   }
 
   async remove(id: number) {
@@ -85,9 +158,16 @@ export class AppointmentService {
       orderBy: {
         date: 'asc',
       },
-      include: {
+      select: {
+        id_appointment: true,
+        date: true,
         patient: true,
         doctor: true,
+        diagnosis: true,
+        treatment: true,
+        observations: true,
+        reference: true,
+        finished: true,
       },
     });
   }

@@ -49,7 +49,19 @@ export class DoctorController {
         last_names: true,
         email: true,
         specialty: true,
-        appointments: true,
+        appointments: {
+          select: {
+            id_appointment: true,
+            date: true,
+            patient: true,
+            doctor: true,
+            diagnosis: true,
+            treatment: true,
+            observations: true,
+            reference: true,
+            finished: true,
+          },
+        },
       },
     });
   }

@@ -29,16 +29,15 @@ model Patient {
 }
 
 model Doctor {
-  id_doctor       Int           @id @default(autoincrement())
-  names           String
-  last_names      String
-  email           String        @unique
-  password        String
-  id_speciality   Int
-  specialty       Specialty     @relation(fields: [id_speciality], references: [id_speciality])
-  appointments    Appointment[]
-  from_references Reference[]   @relation("FromReferences")
-  to_references   Reference[]   @relation("ToReferences")
+  id_doctor     Int           @id @default(autoincrement())
+  names         String
+  last_names    String
+  email         String        @unique
+  password      String
+  id_speciality Int
+  specialty     Specialty     @relation(fields: [id_speciality], references: [id_speciality])
+  appointments  Appointment[]
+  to_references Reference[]   @relation("ToReferences")
 }
 
 model Specialty {
@@ -64,13 +63,11 @@ model Appointment {
 }
 
 model Reference {
-  id_reference   Int     @id @default(autoincrement())
-  id_from_doctor Int
-  id_to_doctor   Int
-  comments       String?
+  id_reference Int     @id @default(autoincrement())
+  id_doctor    Int
+  comments     String?
 
-  from_doctor Doctor        @relation("FromReferences", fields: [id_from_doctor], references: [id_doctor], onDelete: Cascade)
-  to_doctor   Doctor        @relation("ToReferences", fields: [id_to_doctor], references: [id_doctor], onDelete: Cascade)
+  doctor      Doctor        @relation("ToReferences", fields: [id_doctor], references: [id_doctor], onDelete: Cascade)
   Appointment Appointment[]
 }
 
