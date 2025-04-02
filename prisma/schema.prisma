@@ -49,7 +49,7 @@ model Specialty {
 model Appointment {
   id_appointment Int      @id @default(autoincrement())
   id_patient     Int
-  id_doctor      Int
+  id_doctor      Int?
   id_reference   Int?
   date           DateTime
   diagnosis      String?
@@ -58,7 +58,7 @@ model Appointment {
   finished       Boolean
 
   patient   Patient    @relation(fields: [id_patient], references: [id_patient], onDelete: Cascade)
-  doctor    Doctor     @relation(fields: [id_doctor], references: [id_doctor], onDelete: Cascade)
+  doctor    Doctor?    @relation(fields: [id_doctor], references: [id_doctor], onDelete: Cascade)
   reference Reference? @relation(fields: [id_reference], references: [id_reference], onDelete: Cascade)
 }
 

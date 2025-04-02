@@ -25,7 +25,11 @@ export class PatientService {
       include: {
         appointments: {
           include: {
-            doctor: true,
+            reference: {
+              include: {
+                doctor: true,
+              },
+            },
           },
         },
       },
